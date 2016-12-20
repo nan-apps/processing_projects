@@ -91,16 +91,20 @@ void captureEvent(Capture c) {
 void keyPressed() {
   if (key == 43) {
     poly_sides = poly_sides + 10;
+    println("poly_sides: "+poly_sides);
   } else if ( key == 45 ) {
     poly_sides = poly_sides <= 0 ? 0 : poly_sides - 10;
+    println("poly_sides: "+poly_sides);
   }
   
   if (key == 17) {
     thresh = thresh + 1;
+    println("thresh: "+thresh);
   } else if ( key == 18 ) {
     thresh = thresh <= 0 ? 0 : thresh - 1;
+    println("thresh: "+thresh);
   }
   
-  println("thresh: "+thresh);
-  println("poly_sides: "+poly_sides);
+  
+  
 }
