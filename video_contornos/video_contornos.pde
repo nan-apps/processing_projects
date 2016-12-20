@@ -8,8 +8,9 @@ OpenCV opencv;
 ArrayList<Contour> contours;
 ArrayList<Contour> polygons;
 
-int thresh = 100;
+int thresh = 40;
 int poly_sides = 1;
+int poly_sides_thresh = 2000;
 
 int time = millis();
 int wait = 200;
@@ -37,9 +38,9 @@ void draw() {
   if (millis() - time >= wait){
     //update OpenCV with video feed
     opencv.loadImage(video);
-    //image(video, 0, 0 );
+  //  image(video, 0, 0 );
     background(255);
-  //  background(bg);
+    //background(bg);
 
     time = millis();
     opencv.gray();
@@ -47,25 +48,26 @@ void draw() {
     contours = opencv.findContours();
     for (Contour contour : contours) {
       
-      //mode 1
+      
+      ArrayList<PVector> points = contour.getPoints(); 
+      
       fill(0, 0, 0, 50);
       stroke( 0 );
-      contour.draw();
-      ArrayList<PVector> points = contour.getPoints();     
+      strokeWeight(1);
+      beginShape();
       
-      if( points.size() > thresh  ){
+      if( points.size() > poly_sides  && points.size() < poly_sides_thresh  ){
       //  println( points.size() );print("*******************************************");   
         for (int i = 0; i < points.size(); i++) {
           if( i+1 < points.size() ){
             PVector point_0 = points.get(i);
-            PVector point_1 = points.get(i+1);          
+            PVector point_1 = points.get(i+1);
             
-            //mode 2
-            /*fill(0, 255);
-            stroke( 255 );
-            line( point_0.x, point_0.y, point_1.x, point_1.y  );*/
+            //mode 1            
+            vertex( point_0.x, point_0.y);
             
-            //mode 3            
+            
+            //mode 2            
             //stroke(0, 10);
             //fill( 0,  10 );
             //ellipse( point_0.x, point_0.y, 30, 30 );
@@ -74,13 +76,9 @@ void draw() {
         }
       }
       
+      endShape(CLOSE);
+      
 
-     /* stroke(255, 0, 0);
-      beginShape();
-      for (PVector point : contour.getPolygonApproximation().getPoints()) {
-        vertex(point.x, point.y);
-      }
-      endShape();*/
       
     }
   }
@@ -88,4 +86,21 @@ void draw() {
 
 void captureEvent(Capture c) {
   c.read();
+}
+
+void keyPressed() {
+  if (key == 43) {
+    poly_sides = poly_sides + 10;
+  } else if ( key == 45 ) {
+    poly_sides = poly_sides <= 0 ? 0 : poly_sides - 10;
+  }
+  
+  if (key == 17) {
+    thresh = thresh + 1;
+  } else if ( key == 18 ) {
+    thresh = thresh <= 0 ? 0 : thresh - 1;
+  }
+  
+  println("thresh: "+thresh);
+  println("poly_sides: "+poly_sides);
 }
